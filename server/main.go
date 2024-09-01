@@ -2,6 +2,8 @@ package main
 
 import (
 	"fasion.ai/server/ai"
+	"fasion.ai/server/auth"
+	"fasion.ai/server/db"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"log"
@@ -15,17 +17,22 @@ func init() {
 }
 
 func main() {
-	//db.InitDB()
+	database := db.InitDB()
+	services := db.InitServices(database)
+	userHandler := auth.NewUserHandler(services.UserService)
 
 	r := gin.Default()
-	//api := r.Group("/api")
-	//api.Use(common.JWTMiddleware())
+	api := r.Group("/api")
+	api.Use(auth.JWTMiddleware())
 
-	r.POST("/styleAdvice", ai.GetStyleAdvice)
+	api.POST("/styleAdvice", ai.GetStyleAdvice)
 
-	r.GET("/ping", func(c *gin.Context) {
+	r.POST("/login", userHandler.LoginUser)
+	r.POST("/register", userHandler.RegisterUser)
+
+	r.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{
-			"message": "pong",
+			"message": "healthy",
 		})
 	})
 
