@@ -2,6 +2,7 @@ package db
 
 import (
 	"fasion.ai/server/auth"
+	"fasion.ai/server/recommendation"
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -25,7 +26,7 @@ func InitDB() *gorm.DB {
 	if err != nil {
 		log.Fatal("Failed to connect to the database:", err)
 	}
-	err = db.AutoMigrate(&auth.User{})
+	err = db.AutoMigrate(&auth.User{}, &recommendation.Outfit{}, &recommendation.Item{})
 
 	if err != nil {
 		log.Fatal("Failed to auto-migrate the database:", err)
@@ -34,11 +35,13 @@ func InitDB() *gorm.DB {
 }
 
 type Services struct {
-	UserService *auth.Service
+	UserService           *auth.Service
+	RecommendationService *recommendation.Service
 }
 
 func InitServices(db *gorm.DB) *Services {
 	return &Services{
-		UserService: auth.NewUserService(db),
+		UserService:           auth.NewUserService(db),
+		RecommendationService: recommendation.NewRecommendationService(db),
 	}
 }

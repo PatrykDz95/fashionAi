@@ -4,6 +4,7 @@ import (
 	"fasion.ai/server/ai"
 	"fasion.ai/server/auth"
 	"fasion.ai/server/db"
+	"fasion.ai/server/recommendation"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"log"
@@ -20,12 +21,15 @@ func main() {
 	database := db.InitDB()
 	services := db.InitServices(database)
 	userHandler := auth.NewUserHandler(services.UserService)
+	recommendationHandler := recommendation.NewRecommendationHandler(services.RecommendationService)
 
 	r := gin.Default()
 	api := r.Group("/api")
 	api.Use(auth.JWTMiddleware())
 
 	api.POST("/styleAdvice", ai.GetStyleAdvice)
+	api.GET("/recommendations", recommendationHandler.GetRecommendations)
+	api.GET("/recommendations/:id", recommendationHandler.GetRecommendationById)
 
 	r.POST("/login", userHandler.LoginUser)
 	r.POST("/register", userHandler.RegisterUser)
