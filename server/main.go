@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 
-	"fasion.ai/server/ai"
 	"fasion.ai/server/auth"
 	"fasion.ai/server/db"
 	"fasion.ai/server/recommendation"
@@ -28,11 +27,11 @@ func main() {
 	api := r.Group("/api")
 	//api.Use(auth.JWTMiddleware())
 
-	api.POST("/styleAdvice", ai.GetStyleAdvice)
+	//api.POST("/styleAdvice", ai.GetStyleAdvice)
 
 	api.GET("/recommendations", recommendationHandler.GetRecommendations)
 	api.GET("/recommendations/:id", recommendationHandler.GetRecommendationById)
-	api.POST("/recommendations", recommendationHandler.SaveRecommendation)
+	api.POST("/recommendations", recommendationHandler.Recommend)
 
 	r.POST("/login", userHandler.LoginUser)
 	r.POST("/register", userHandler.RegisterUser)

@@ -3,6 +3,7 @@ package recommendation
 import (
 	"net/http"
 
+	"fasion.ai/server/ai"
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,6 +31,18 @@ func (h *Handler) GetRecommendationById(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, recommendation)
+}
+
+func (h *Handler) Recommend(c *gin.Context) {
+	var userInput struct {
+		Input string `json:"input"`
+	}
+	if err := c.ShouldBindJSON(&userInput); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"errorMessage": err.Error()})
+		return
+	}
+	aiHandler := ai.AIHandler{}
+	aiHandler.GetStyleAdvice(userInput.Input, c)
 }
 
 func (h *Handler) SaveRecommendation(c *gin.Context) {

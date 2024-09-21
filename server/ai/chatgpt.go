@@ -3,8 +3,7 @@ package ai
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 )
@@ -38,30 +37,18 @@ func GetChatGPTResponse(prompt string) (string, error) {
 	}
 	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
 	var result map[string]interface{}
-	json.Unmarshal(body, &result)
-
-	// Safely extract the message content from the response
-	choices, ok := result["choices"].([]interface{})
-	if !ok || len(choices) == 0 {
-		return "", fmt.Errorf("no choices found in response")
+	if err := json.Unmarshal(body, &result); err != nil {
+		return "", err
 	}
 
-	messageMap, ok := choices[0].(map[string]interface{})
-	if !ok {
-		return "", fmt.Errorf("unexpected structure in choices")
-	}
+	choices := result["choices"].([]interface{})
+	message := choices[0].(map[string]interface{})["message"].(map[string]interface{})["content"].(string)
 
-	message, ok := messageMap["message"].(map[string]interface{})
-	if !ok {
-		return "", fmt.Errorf("unexpected structure in message")
-	}
-
-	content, ok := message["content"].(string)
-	if !ok {
-		return "", fmt.Errorf("content is not a string")
-	}
-
-	return content, nil
+	return message, nil
 }
