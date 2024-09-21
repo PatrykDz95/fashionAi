@@ -1,8 +1,9 @@
 package recommendation
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
@@ -29,4 +30,17 @@ func (h *Handler) GetRecommendationById(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, recommendation)
+}
+
+func (h *Handler) SaveRecommendation(c *gin.Context) {
+	var recommendation Outfit
+	if err := c.ShouldBindJSON(&recommendation); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"errorMessage": err.Error()})
+		return
+	}
+	if err := h.Service.SaveRecommendation(&recommendation); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"errorMessage": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, recommendation)
 }

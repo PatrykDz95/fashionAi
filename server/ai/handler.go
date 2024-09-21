@@ -1,8 +1,12 @@
 package ai
 
 import (
-	"github.com/gin-gonic/gin"
+	"fmt"
+	"log"
 	"net/http"
+	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 var req struct {
@@ -21,4 +25,15 @@ func GetStyleAdvice(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"response": response})
+}
+
+func readPrompt(userInput string) string {
+	content, err := os.ReadFile("server/prompts/recommendation")
+	if err != nil {
+		log.Fatalf("Failed to read file: %v", err)
+	}
+
+	promptTemplate := string(content)
+
+	return fmt.Sprintf(promptTemplate, userInput)
 }

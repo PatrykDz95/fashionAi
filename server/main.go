@@ -1,13 +1,14 @@
 package main
 
 import (
+	"log"
+
 	"fasion.ai/server/ai"
 	"fasion.ai/server/auth"
 	"fasion.ai/server/db"
 	"fasion.ai/server/recommendation"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"log"
 )
 
 func init() {
@@ -25,11 +26,13 @@ func main() {
 
 	r := gin.Default()
 	api := r.Group("/api")
-	api.Use(auth.JWTMiddleware())
+	//api.Use(auth.JWTMiddleware())
 
 	api.POST("/styleAdvice", ai.GetStyleAdvice)
+
 	api.GET("/recommendations", recommendationHandler.GetRecommendations)
 	api.GET("/recommendations/:id", recommendationHandler.GetRecommendationById)
+	api.POST("/recommendations", recommendationHandler.SaveRecommendation)
 
 	r.POST("/login", userHandler.LoginUser)
 	r.POST("/register", userHandler.RegisterUser)
