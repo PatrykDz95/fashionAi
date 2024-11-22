@@ -3,28 +3,21 @@ package ai
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 
-	"github.com/gin-gonic/gin"
+	"fasion.ai/server/internal/infrastructure/ai"
 )
 
 type AIHandler struct{}
 
-var req struct {
-	Prompt string `json:"prompt"`
-}
-
-func (h *AIHandler) GetStyleAdvice(input string, c *gin.Context) {
+func (h *AIHandler) GetStyleAdvice(input string) (string, error) {
 	prompt := readPrompt(input)
 	print(prompt)
-	response, err := GetChatGPTResponse(prompt)
+	response, err := ai.GetChatGPTResponse(prompt)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return "", err
 	}
-	print(response)
-	c.JSON(http.StatusOK, gin.H{"response": response})
+	return response, nil
 }
 
 func readPrompt(userInput string) string {

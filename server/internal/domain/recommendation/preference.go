@@ -1,6 +1,6 @@
-package preferences
+package recommendation
 
-type Preference struct {
+type Preference struct { //TODO move somewhere else
 	ID             uint     `gorm:"primaryKey;autoIncrement"`
 	UserID         uint     `gorm:"user_id"`
 	Style          string   `gorm:"style"`
