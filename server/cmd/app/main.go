@@ -6,12 +6,12 @@ import (
 	"fasion.ai/server/internal/application/ai"
 	"fasion.ai/server/internal/application/auth"
 	"fasion.ai/server/internal/application/recommendation"
-	domain_ai "fasion.ai/server/internal/domain/ai"
+	infra_ai "fasion.ai/server/internal/infrastructure/ai"
 	infra_auth "fasion.ai/server/internal/infrastructure/auth"
 	"fasion.ai/server/internal/infrastructure/db"
 	infra_rec "fasion.ai/server/internal/infrastructure/recommendation"
 	api_ai "fasion.ai/server/internal/interfaces/api/ai"
-	api_auth "fasion.ai/server/internal/interfaces/api/auth"
+	interface_auth "fasion.ai/server/internal/interfaces/api/auth"
 	api_rec "fasion.ai/server/internal/interfaces/api/recommendation"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -30,11 +30,13 @@ func main() {
 	recommendationService := recommendation.NewRecommendationService(recommendationRepo)
 	recommendationHandler := api_rec.NewRecommendationHandler(recommendationService)
 
-	aiHandler := api_ai.NewAIHandler(ai.NewAIService(&domain_ai.AIHandler{}))
+	aiClient := infra_ai.NewClient()
+	aiService := ai.NewAIService(aiClient)
+	aiHandler := api_ai.NewAIHandler(aiService)
 
 	authRepo := infra_auth.NewRepository(database)
 	authService := auth.NewAuthService(authRepo)
-	authHandler := api_auth.NewAuthHandler(authService)
+	authHandler := interface_auth.NewAuthHandler(authService)
 
 	r := gin.Default()
 

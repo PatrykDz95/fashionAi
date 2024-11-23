@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -13,7 +12,17 @@ import (
 	"fasion.ai/server/internal/domain/recommendation"
 )
 
-func GetChatGPTResponse(prompt string) ([]recommendation.Item, error) {
+type Client interface {
+	GetChatGPTResponse(prompt string) ([]recommendation.Item, error)
+}
+
+type client struct{}
+
+func NewClient() Client {
+	return &client{}
+}
+
+func (r *client) GetChatGPTResponse(prompt string) ([]recommendation.Item, error) {
 	apiKey := os.Getenv("OPENAI_API_KEY")
 	url := "https://api.openai.com/v1/chat/completions"
 
@@ -46,7 +55,6 @@ func GetChatGPTResponse(prompt string) ([]recommendation.Item, error) {
 	if err != nil {
 		return nil, err
 	}
-	//log.Printf("Raw Response Body: %s", string(body))
 
 	var result map[string]interface{}
 	if err := json.Unmarshal(body, &result); err != nil {
@@ -55,9 +63,7 @@ func GetChatGPTResponse(prompt string) ([]recommendation.Item, error) {
 
 	choices := result["choices"].([]interface{})
 	message := choices[0].(map[string]interface{})["message"].(map[string]interface{})["content"].(string)
-	log.Printf("Raw message: %s", string(message))
-
-	message, err = cleanUpMessage(message)
+	message = cleanUpMessage(message)
 
 	var clothingItems []recommendation.Item
 	if err := json.Unmarshal([]byte(message), &clothingItems); err != nil {
@@ -67,9 +73,8 @@ func GetChatGPTResponse(prompt string) ([]recommendation.Item, error) {
 	return clothingItems, nil
 }
 
-func cleanUpMessage(rawResponse string) (string, error) {
+func cleanUpMessage(rawResponse string) string {
 	rawResponse = strings.TrimPrefix(rawResponse, "```json")
 	rawResponse = strings.TrimSuffix(rawResponse, "```")
-
-	return rawResponse, nil
+	return rawResponse
 }

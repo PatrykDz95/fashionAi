@@ -1,18 +1,24 @@
 package ai
 
 import (
-	"fasion.ai/server/internal/domain/ai"
+	domain_ai "fasion.ai/server/internal/domain/ai"
 	"fasion.ai/server/internal/domain/recommendation"
+	"fasion.ai/server/internal/infrastructure/ai"
 )
 
 type AIService struct {
-	aiHandler *ai.AIHandler
+	aiClient ai.Client
 }
 
-func NewAIService(aiHandler *ai.AIHandler) *AIService {
-	return &AIService{aiHandler: aiHandler}
+func NewAIService(aiClient ai.Client) *AIService {
+	return &AIService{aiClient: aiClient}
 }
 
-func (s *AIService) GetStyleAdvice(prompt string) ([]recommendation.Item, error) {
-	return s.aiHandler.GetStyleAdvice(prompt)
+func (s *AIService) GetStyleAdvice(input string) ([]recommendation.Item, error) {
+	prompt := domain_ai.ReadPrompt(input)
+	response, err := s.aiClient.GetChatGPTResponse(prompt)
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
 }
