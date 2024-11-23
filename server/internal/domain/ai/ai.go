@@ -5,17 +5,23 @@ import (
 	"log"
 	"os"
 
+	"fasion.ai/server/internal/domain/recommendation"
 	"fasion.ai/server/internal/infrastructure/ai"
 )
 
 type AIHandler struct{}
 
-func (h *AIHandler) GetStyleAdvice(input string) (string, error) {
+type AIService struct {
+	aiHandler AIHandler
+}
+
+// TODO remove/move to interface
+func (h *AIHandler) GetStyleAdvice(input string) ([]recommendation.Item, error) {
 	prompt := readPrompt(input)
 	print(prompt)
 	response, err := ai.GetChatGPTResponse(prompt)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	return response, nil
 }

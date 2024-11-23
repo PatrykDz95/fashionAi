@@ -38,18 +38,18 @@ func main() {
 
 	r := gin.Default()
 
-	api := r.Group("/api")
-	api.Use(api_auth.JWTMiddleware())
-	{
-		api.GET("/recommendations", recommendationHandler.GetRecommendations)
-		api.GET("/recommendations/:id", recommendationHandler.GetRecommendationById)
-		api.POST("/recommendations", recommendationHandler.SaveRecommendation)
-	}
+	//api := r.Group("/api")
+	// api.Use(api_auth.JWTMiddleware())
+	// {
+	// api.GET("/recommendations", recommendationHandler.GetRecommendations)
+	// api.GET("/recommendations/:id", recommendationHandler.GetRecommendationById)
+	// api.POST("/recommendations", recommendationHandler.SaveRecommendation)
+	//}
 
 	r.POST("/styleAdvice", aiHandler.GetStyleAdvice)
-	// r.GET("/recommendations", recommendationHandler.GetRecommendations)
-	// r.GET("/recommendations/:id", recommendationHandler.GetRecommendationById)
-	// r.POST("/recommendations", recommendationHandler.SaveRecommendation)
+	r.GET("/recommendations", recommendationHandler.GetRecommendations)
+	r.GET("/recommendations/:id", recommendationHandler.GetRecommendationById)
+	r.POST("/recommendations", recommendationHandler.SaveRecommendation)
 
 	r.POST("/register", authHandler.Register)
 	r.POST("/login", authHandler.Login)

@@ -1,2 +1,11 @@
-Based on the user input, return links to recommended clothes from zalando or amazon.
+Based on the user input, return full names of clothes and name of websites that the user can find them.
 User input: %s
+Return an array of those fields in json format without new lines:
+    {
+      "Name": "
+      "Brand": ""
+      "Category": ""
+      "Color": ""
+      "Material": ""
+      "Website": ""
+    }
