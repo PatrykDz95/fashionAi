@@ -13,24 +13,6 @@ import (
 var jwtSecretKey = os.Getenv("JWT_SECRET")
 var jwtSecret = []byte(jwtSecretKey)
 
-// func GenerateToken(username string) (string, error) {
-// 	claims := jwt.MapClaims{
-// 		"username": username,
-// 		"exp":      time.Now().Add(time.Hour * 72).Unix(),
-// 		"iat":      time.Now().Unix(),
-// 		"iss":      appName,
-// 	}
-
-// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-// 	tokenString, err := token.SignedString(jwtSecret)
-// 	if err != nil {
-// 		return "", err
-// 	}
-
-// 	return tokenString, nil
-// }
-
 func JWTMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")

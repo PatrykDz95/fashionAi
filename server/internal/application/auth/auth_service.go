@@ -11,7 +11,6 @@ import (
 
 var appName = os.Getenv("APP_NAME")
 var jwtSecretKey = os.Getenv("JWT_SECRET")
-
 var jwtSecret = []byte(jwtSecretKey)
 
 type AuthService struct {
