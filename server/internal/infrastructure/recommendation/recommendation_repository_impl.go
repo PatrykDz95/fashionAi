@@ -6,17 +6,11 @@ import (
 	"gorm.io/gorm"
 )
 
-type Repository interface {
-	GetRecommendations() ([]recommendation.Outfit, error)
-	GetRecommendationByID(id uint) (*recommendation.Outfit, error)
-	SaveRecommendation(outfit *recommendation.Outfit) error
-}
-
 type repository struct {
 	db *gorm.DB
 }
 
-func NewRepository(db *gorm.DB) Repository {
+func NewRepository(db *gorm.DB) recommendation.Repository {
 	return &repository{db: db}
 }
 

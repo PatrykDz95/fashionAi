@@ -1,8 +1,7 @@
 package recommendation
 
 import (
-	domain "fasion.ai/server/internal/domain/recommendation"
-	"fasion.ai/server/internal/infrastructure/recommendation"
+	"fasion.ai/server/internal/domain/recommendation"
 )
 
 type RecommendationService struct {
@@ -13,14 +12,14 @@ func NewRecommendationService(repo recommendation.Repository) *RecommendationSer
 	return &RecommendationService{repo: repo}
 }
 
-func (s *RecommendationService) GetRecommendations() ([]domain.Outfit, error) {
+func (s *RecommendationService) GetRecommendations() ([]recommendation.Outfit, error) {
 	return s.repo.GetRecommendations()
 }
 
-func (s *RecommendationService) GetRecommendationByID(id uint) (*domain.Outfit, error) {
+func (s *RecommendationService) GetRecommendationByID(id uint) (*recommendation.Outfit, error) {
 	return s.repo.GetRecommendationByID(id)
 }
 
-func (s *RecommendationService) SaveRecommendation(outfit *domain.Outfit) error {
+func (s *RecommendationService) SaveRecommendation(outfit *recommendation.Outfit) error {
 	return s.repo.SaveRecommendation(outfit)
 }
