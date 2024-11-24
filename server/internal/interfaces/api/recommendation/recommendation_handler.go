@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"fasion.ai/server/internal/application/recommendation"
-	domain_rec "fasion.ai/server/internal/domain/recommendation"
+	domainRec "fasion.ai/server/internal/domain/recommendation"
 	"github.com/gin-gonic/gin"
 )
 
@@ -42,7 +42,7 @@ func (h *Handler) GetRecommendationById(c *gin.Context) {
 }
 
 func (h *Handler) SaveRecommendation(c *gin.Context) {
-	var recommendation domain_rec.Outfit
+	var recommendation domainRec.Outfit
 	if err := c.ShouldBindJSON(&recommendation); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"errorMessage": err.Error()})
 		return

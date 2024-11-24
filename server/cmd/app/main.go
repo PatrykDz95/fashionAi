@@ -6,14 +6,13 @@ import (
 	"fasion.ai/server/internal/application/ai"
 	"fasion.ai/server/internal/application/auth"
 	"fasion.ai/server/internal/application/recommendation"
-	infra_ai "fasion.ai/server/internal/infrastructure/ai"
-	infra_auth "fasion.ai/server/internal/infrastructure/auth"
+	infraAI "fasion.ai/server/internal/infrastructure/ai"
+	infraAuth "fasion.ai/server/internal/infrastructure/auth"
 	"fasion.ai/server/internal/infrastructure/db"
-	infra_rec "fasion.ai/server/internal/infrastructure/recommendation"
-	api_ai "fasion.ai/server/internal/interfaces/api/ai"
-	api_auth "fasion.ai/server/internal/interfaces/api/auth"
-	interface_auth "fasion.ai/server/internal/interfaces/api/auth"
-	api_rec "fasion.ai/server/internal/interfaces/api/recommendation"
+	infraRec "fasion.ai/server/internal/infrastructure/recommendation"
+	apiAI "fasion.ai/server/internal/interfaces/api/ai"
+	apiAuth "fasion.ai/server/internal/interfaces/api/auth"
+	apiRec "fasion.ai/server/internal/interfaces/api/recommendation"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -28,22 +27,22 @@ func init() {
 func main() {
 	database := db.InitDB()
 
-	authRepo := infra_auth.NewRepository(database)
+	authRepo := infraAuth.NewRepository(database)
 	authService := auth.NewAuthService(authRepo)
-	authHandler := interface_auth.NewAuthHandler(authService)
+	authHandler := apiAuth.NewAuthHandler(authService)
 
-	recommendationRepo := infra_rec.NewRepository(database)
+	recommendationRepo := infraRec.NewRepository(database)
 	recommendationService := recommendation.NewRecommendationService(recommendationRepo)
-	recommendationHandler := api_rec.NewRecommendationHandler(recommendationService)
+	recommendationHandler := apiRec.NewRecommendationHandler(recommendationService)
 
-	aiClient := infra_ai.NewClient()
+	aiClient := infraAI.NewClient()
 	aiService := ai.NewAIService(aiClient, recommendationService, authService)
-	aiHandler := api_ai.NewAIHandler(aiService)
+	aiHandler := apiAI.NewAIHandler(aiService)
 
 	r := gin.Default()
 
 	api := r.Group("/api")
-	api.Use(api_auth.JWTMiddleware())
+	api.Use(apiAuth.JWTMiddleware())
 	{
 		api.POST("/styleAdvice", aiHandler.GetStyleAdvice)
 		api.GET("/recommendations", recommendationHandler.GetRecommendations)

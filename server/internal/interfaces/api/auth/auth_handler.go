@@ -3,22 +3,22 @@ package auth
 import (
 	"net/http"
 
-	app_auth "fasion.ai/server/internal/application/auth"
-	domain_auth "fasion.ai/server/internal/domain/auth"
+	appAuth "fasion.ai/server/internal/application/auth"
+	domainAuth "fasion.ai/server/internal/domain/auth"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthHandler struct {
-	authService *app_auth.AuthService
+	authService *appAuth.AuthService
 }
 
-func NewAuthHandler(authService *app_auth.AuthService) *AuthHandler {
+func NewAuthHandler(authService *appAuth.AuthService) *AuthHandler {
 	return &AuthHandler{authService: authService}
 }
 
 func (h *AuthHandler) Register(c *gin.Context) {
-	var user domain_auth.User
+	var user domainAuth.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

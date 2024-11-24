@@ -2,14 +2,14 @@ package auth
 
 import (
 	"fasion.ai/server/internal/domain/auth"
-	infra_auth "fasion.ai/server/internal/infrastructure/auth"
+	infraAuth "fasion.ai/server/internal/infrastructure/auth"
 )
 
 type AuthService struct {
-	repo infra_auth.Repository
+	repo infraAuth.Repository
 }
 
-func NewAuthService(repo infra_auth.Repository) *AuthService {
+func NewAuthService(repo infraAuth.Repository) *AuthService {
 	return &AuthService{repo: repo}
 }
 
