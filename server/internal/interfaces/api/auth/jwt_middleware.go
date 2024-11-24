@@ -31,11 +31,21 @@ func JWTMiddleware() gin.HandlerFunc {
 			return jwtSecret, nil
 		})
 
-		if err != nil || !token.Valid {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if err != nil || !ok || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
 			c.Abort()
 			return
 		}
+
+		username, ok := claims["username"].(string)
+		if !ok {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+			c.Abort()
+			return
+		}
+
+		c.Set("username", username)
 		c.Next()
 	}
 }

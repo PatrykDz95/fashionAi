@@ -16,6 +16,11 @@ func NewAIHandler(aiService *ai.AIService) *AIHandler {
 }
 
 func (h *AIHandler) GetStyleAdvice(c *gin.Context) {
+	username, exists := c.Get("username")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Username not found in token"})
+		return
+	}
 	var req struct {
 		Prompt string `json:"prompt"`
 	}
@@ -24,7 +29,7 @@ func (h *AIHandler) GetStyleAdvice(c *gin.Context) {
 		return
 	}
 
-	response, err := h.aiService.GetStyleAdvice(req.Prompt)
+	response, err := h.aiService.GetStyleAdvice(req.Prompt, username.(string))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
