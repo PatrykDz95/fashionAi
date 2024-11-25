@@ -3,42 +3,44 @@ package ai
 import (
 	"time"
 
-	app_auth "fasion.ai/server/internal/application/auth"
-	app_rec "fasion.ai/server/internal/application/recommendation"
-	domain_ai "fasion.ai/server/internal/domain/ai"
+	appAuth "fasion.ai/server/internal/application/auth"
+	appRec "fasion.ai/server/internal/application/recommendation"
+	domainAI "fasion.ai/server/internal/domain/ai"
 	"fasion.ai/server/internal/domain/recommendation"
 	"fasion.ai/server/internal/infrastructure/ai"
 )
 
 type AIService struct {
 	aiClient              ai.Client
-	recommendationService *app_rec.RecommendationService
-	authService           *app_auth.AuthService
+	recommendationService *appRec.RecommendationService
+	authService           *appAuth.AuthService
 }
 
 func NewAIService(aiClient ai.Client,
-	recommendationService *app_rec.RecommendationService,
-	authService *app_auth.AuthService) *AIService {
+	recommendationService *appRec.RecommendationService,
+	authService *appAuth.AuthService) *AIService {
 	return &AIService{
 		aiClient:              aiClient,
 		recommendationService: recommendationService,
 		authService:           authService}
 }
 
-func (s *AIService) GetStyleAdvice(input, username string) ([]recommendation.Item, error) {
-	prompt := domain_ai.ReadPrompt(input)
-	response, err := s.aiClient.GetChatGPTResponse(prompt)
+func (s *AIService) GetStyleAdvice(input, username, season, occasion string) ([]recommendation.Item, error) {
+	user, err := s.authService.GetUserByUsername(username)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := s.authService.GetUserByUsername(username)
+	prompt := domainAI.ReadPrompt(input, season, occasion)
+	response, err := s.aiClient.GetChatGPTResponse(prompt)
 	if err != nil {
 		return nil, err
 	}
 
 	outfit := &recommendation.Outfit{
 		UserID:           user.ID,
+		Season:           recommendation.Season(season),
+		Occasion:         occasion,
 		RecommendedItems: response,
 		DateCreated:      time.Now(),
 	}

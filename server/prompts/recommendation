@@ -1,5 +1,7 @@
 Based on the user input, return full names of clothes and name of websites that the user can find them.
-User input: %s
+User input: %s,
+Season: %s,
+Occasion: %s
 Return an array of those fields in json format without new lines:
     {
       "Name": "

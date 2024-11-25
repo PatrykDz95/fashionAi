@@ -21,15 +21,18 @@ func (h *AIHandler) GetStyleAdvice(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Username not found in token"})
 		return
 	}
+
 	var req struct {
-		Prompt string `json:"prompt"`
+		Prompt   string `json:"prompt"`
+		Season   string `json:"season"`
+		Occasion string `json:"occasion"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	response, err := h.aiService.GetStyleAdvice(req.Prompt, username.(string))
+	response, err := h.aiService.GetStyleAdvice(req.Prompt, username.(string), req.Season, req.Occasion)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

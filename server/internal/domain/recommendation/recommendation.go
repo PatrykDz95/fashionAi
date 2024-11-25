@@ -2,11 +2,20 @@ package recommendation
 
 import "time"
 
+type Season string
+
+const (
+	Spring Season = "Spring"
+	Summer Season = "Summer"
+	Autumn Season = "Autumn"
+	Winter Season = "Winter"
+)
+
 type Outfit struct {
 	ID               uint      `gorm:"primaryKey;autoIncrement"`
 	UserID           uint      `gorm:"user_id"`
+	Season           Season    `gorm:"season"`
 	Occasion         string    `gorm:"occasion"`
-	Style            string    `gorm:"style"`
 	RecommendedItems []Item    `gorm:"foreignKey:OutfitID"`
 	DateCreated      time.Time `gorm:"date_created"`
 }
